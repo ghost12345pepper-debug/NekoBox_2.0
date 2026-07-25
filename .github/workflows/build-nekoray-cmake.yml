@@ -12,6 +12,9 @@ on:
       artifact-pack:
         description: "artifact-pack: If want ignore"
         required: false
+permissions:
+  contents: write
+
 jobs:
   build-go:
     strategy:

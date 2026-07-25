@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QDialogButtonBox>
-#include "main/NekoGui_DataStore.hpp"
+#include "main/NekoGui.hpp"
 
 DialogPingSettings::DialogPingSettings(QWidget *parent) : QDialog(parent) {
     setWindowTitle(tr("Ping Test Settings"));

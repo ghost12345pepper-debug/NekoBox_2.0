@@ -148,7 +148,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->horizontalLayout_2->insertWidget(ui->horizontalLayout_2->indexOf(toolButton_testPing) + 1, checkBox_adBlock);
     connect(checkBox_adBlock, &QCheckBox::toggled, this, [=](bool checked) {
         NekoGui::dataStore->block_ads_malware = checked;
-        NekoGui::dataStore->save();
+        NekoGui::dataStore->Save();
         // Maybe log a message to inform the user it takes effect on next VPN start
         show_log_impl(tr("Ad & Malware blocker %1. (Takes effect on next connection)").arg(checked ? tr("enabled") : tr("disabled")));
     });
