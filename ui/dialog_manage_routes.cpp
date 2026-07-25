@@ -113,6 +113,7 @@ void DialogManageRoutes::accept() {
 QList<QAction *> DialogManageRoutes::getBuiltInSchemes() {
     QList<QAction *> list;
     list.append(this->schemeToAction(tr("Bypass LAN and China"), routing_cn_lan));
+    list.append(this->schemeToAction(tr("Bypass Local IDE/Auth & RU"), routing_ide_auth));
     list.append(this->schemeToAction(tr("Global"), routing_global));
     return list;
 }

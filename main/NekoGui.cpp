@@ -334,6 +334,39 @@ namespace NekoGui {
                 "domain:appcenter.ms\n"
                 "domain:firebase.io\n"
                 "domain:crashlytics.com\n";
+        } else if (preset == 2) {
+            direct_ip = "";
+            direct_domain = "";
+            proxy_ip = "";
+            proxy_domain = "";
+            block_ip = "";
+            block_domain = "";
+            custom = "{\n"
+                     "  \"rules\": [\n"
+                     "    {\n"
+                     "      \"outbound\": \"direct\",\n"
+                     "      \"ip_cidr\": [\n"
+                     "        \"127.0.0.0/8\",\n"
+                     "        \"192.168.0.0/16\",\n"
+                     "        \"10.0.0.0/8\",\n"
+                     "        \"172.16.0.0/12\"\n"
+                     "      ]\n"
+                     "    },\n"
+                     "    {\n"
+                     "      \"outbound\": \"direct\",\n"
+                     "      \"geoip\": [\n"
+                     "        \"ru\",\n"
+                     "        \"private\"\n"
+                     "      ]\n"
+                     "    },\n"
+                     "    {\n"
+                     "      \"outbound\": \"direct\",\n"
+                     "      \"geosite\": [\n"
+                     "        \"category-ru\"\n"
+                     "      ]\n"
+                     "    }\n"
+                     "  ]\n"
+                     "}";
         }
         if (!Preset::SingBox::DomainStrategy.contains(domain_strategy)) domain_strategy = "";
         if (!Preset::SingBox::DomainStrategy.contains(outbound_domain_strategy)) outbound_domain_strategy = "";

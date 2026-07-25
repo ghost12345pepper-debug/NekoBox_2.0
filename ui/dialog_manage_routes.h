@@ -38,6 +38,7 @@ private:
     Qv2ray::ui::widgets::AutoCompleteTextEdit *proxyIPTxt;
     //
     NekoGui::Routing routing_cn_lan = NekoGui::Routing(1);
+    NekoGui::Routing routing_ide_auth = NekoGui::Routing(2);
     NekoGui::Routing routing_global = NekoGui::Routing(0);
     //
     QString title_base;
