@@ -1912,7 +1912,7 @@ void MainWindow::setupAutoPingTimer() {
     }
     if (!autoPingLabel) {
         autoPingLabel = new QLabel(this);
-        ui->statusbar->addPermanentWidget(autoPingLabel);
+        this->statusBar()->addPermanentWidget(autoPingLabel);
     }
     if (!tickTimer) {
         tickTimer = new QTimer(this);
