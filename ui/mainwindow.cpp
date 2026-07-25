@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Add Test Ping Button
     auto toolButton_testPing = new QToolButton(this);
-    toolButton_testPing->setText(tr("Тест пинга"));
+    toolButton_testPing->setText(tr("Пинг"));
     toolButton_testPing->setIcon(QIcon::fromTheme("b-network-wired"));
     toolButton_testPing->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolButton_testPing->setPopupMode(QToolButton::InstantPopup);
@@ -1910,13 +1910,33 @@ void MainWindow::setupAutoPingTimer() {
         autoPingTimer = new QTimer(this);
         connect(autoPingTimer, &QTimer::timeout, this, &MainWindow::onAutoPingTriggered);
     }
+    if (!autoPingLabel) {
+        autoPingLabel = new QLabel(this);
+        ui->statusbar->addPermanentWidget(autoPingLabel);
+    }
+    if (!tickTimer) {
+        tickTimer = new QTimer(this);
+        connect(tickTimer, &QTimer::timeout, this, [=]() {
+            if (NekoGui::dataStore->auto_ping_enabled && autoPingTimer->isActive()) {
+                int remaining = autoPingTimer->remainingTime() / 1000;
+                autoPingLabel->setText(tr("Auto ping: %1s left").arg(remaining));
+            } else {
+                autoPingLabel->setText(tr("Auto ping: Disabled"));
+            }
+        });
+        tickTimer->start(1000);
+    }
     
     if (NekoGui::dataStore->auto_ping_enabled) {
         int intervalMins = NekoGui::dataStore->auto_ping_interval_type;
         if (intervalMins <= 0) intervalMins = 5; // fallback
         autoPingTimer->start(intervalMins * 60 * 1000);
+        // Force an immediate update
+        int remaining = autoPingTimer->remainingTime() / 1000;
+        autoPingLabel->setText(tr("Auto ping: %1s left").arg(remaining));
     } else {
         autoPingTimer->stop();
+        autoPingLabel->setText(tr("Auto ping: Disabled"));
     }
 }
 

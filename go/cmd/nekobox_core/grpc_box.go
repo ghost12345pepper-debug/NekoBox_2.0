@@ -9,11 +9,7 @@ import (
 	"grpc_server/gen"
 
 	"github.com/matsuridayo/libneko/neko_common"
-	"github.com/matsuridayo/libneko/neko_log"
-	"github.com/matsuridayo/libneko/speedtest"
 	box "github.com/sagernet/sing-box"
-	"github.com/sagernet/sing-box/boxapi"
-	boxmain "github.com/sagernet/sing-box/cmd/sing-box"
 
 	"log"
 
@@ -44,18 +40,41 @@ func (s *server) Start(ctx context.Context, in *gen.LoadConfigReq) (out *gen.Err
 		return
 	}
 
-	instance, instance_cancel, err = boxmain.Create([]byte(in.CoreConfig))
+	var options option.Options
+	err = options.UnmarshalJSON([]byte(in.CoreConfig))
+	if err != nil {
+		return
+	}
 
-	if instance != nil {
-		// Logger
-		instance.SetLogWritter(neko_log.LogWriter)
-		// V2ray Service
-		if in.StatsOutbounds != nil {
-			instance.Router().SetV2RayServer(boxapi.NewSbV2rayServer(option.V2RayStatsServiceOptions{
-				Enabled:   true,
-				Outbounds: in.StatsOutbounds,
-			}))
+	if in.StatsOutbounds != nil {
+		if options.Experimental == nil {
+			options.Experimental = &option.ExperimentalOptions{}
 		}
+		if options.Experimental.V2RayAPI == nil {
+			options.Experimental.V2RayAPI = &option.V2RayAPIOptions{}
+		}
+		options.Experimental.V2RayAPI.Stats = &option.V2RayStatsServiceOptions{
+			Enabled:   true,
+			Outbounds: in.StatsOutbounds,
+		}
+	}
+
+	bCtx, cancel := context.WithCancel(context.Background())
+	instance_cancel = cancel
+
+	instance, err = box.New(bCtx, options, nil)
+	if err != nil {
+		cancel()
+		instance_cancel = nil
+		return
+	}
+
+	err = instance.Start()
+	if err != nil {
+		cancel()
+		instance_cancel = nil
+		instance = nil
+		return
 	}
 
 	return

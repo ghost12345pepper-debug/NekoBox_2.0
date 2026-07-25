@@ -8,7 +8,7 @@ QPixmap Icon::GetTrayIcon(Icon::TrayIconStatus status) {
     QPixmap pixmap;
 
     // software embedded icon
-    auto pixmap_read = QPixmap(":/neko/" + software_name.toLower() + ".png");
+    auto pixmap_read = QPixmap(":/neko/nekobox.png");
     if (!pixmap_read.isNull()) pixmap = pixmap_read;
 
     // software pack icon

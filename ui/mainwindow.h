@@ -63,6 +63,8 @@ public:
     QTimer *autoPingTimer;
     void setupAutoPingTimer();
     void onAutoPingTriggered();
+    QLabel *autoPingLabel;
+    QTimer *tickTimer;
 
     void start_select_mode(QObject *context, const std::function<void(int)> &callback);
 
