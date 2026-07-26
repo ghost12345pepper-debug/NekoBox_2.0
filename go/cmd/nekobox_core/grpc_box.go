@@ -9,7 +9,10 @@ import (
 	"grpc_server/gen"
 
 	"github.com/matsuridayo/libneko/neko_common"
+	"github.com/matsuridayo/libneko/speedtest"
 	box "github.com/sagernet/sing-box"
+	boxapi "github.com/sagernet/sing-box/boxapi"
+	boxmain "github.com/sagernet/sing-box/cmd/sing-box"
 
 	"log"
 
@@ -62,7 +65,10 @@ func (s *server) Start(ctx context.Context, in *gen.LoadConfigReq) (out *gen.Err
 	bCtx, cancel := context.WithCancel(context.Background())
 	instance_cancel = cancel
 
-	instance, err = box.New(bCtx, options, nil)
+	instance, err = box.New(box.Options{
+		Options: options,
+		Context: bCtx,
+	})
 	if err != nil {
 		cancel()
 		instance_cancel = nil
