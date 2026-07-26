@@ -1,5 +1,6 @@
 #include "./ui_mainwindow.h"
 #include "mainwindow.h"
+#include <QStatusBar>
 
 #include "fmt/Preset.hpp"
 #include "db/ProfileFilter.hpp"

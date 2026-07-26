@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QLabel>
+#include <QTimer>
 
 #include "main/NekoGui.hpp"
 

@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include "main/NekoGui.hpp"
+#include "db/Database.hpp"
 
 DialogPingSettings::DialogPingSettings(QWidget *parent) : QDialog(parent) {
     setWindowTitle(tr("Ping Test Settings"));
@@ -65,7 +66,14 @@ DialogPingSettings::DialogPingSettings(QWidget *parent) : QDialog(parent) {
     connect(chkIncludeMulti, &QCheckBox::toggled, this, &DialogPingSettings::updateUiState);
 
     // populate servers
-    // NekoGui::profileManager->CurrentGroup()->profiles -> but it's complex, we'll leave list empty or add dummy for now, then hook up to ProfileManager later
+    if (NekoGui::profileManager->CurrentGroup() != nullptr) {
+        for (const auto &pf: NekoGui::profileManager->CurrentGroup()->ProfilesWithOrder()) {
+            auto item = new QListWidgetItem(pf->bean->DisplayTypeAndName(), listServers);
+            item->setData(Qt::UserRole, pf->id);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(Qt::Unchecked);
+        }
+    }
     
     loadSettings();
     updateUiState();
@@ -98,6 +106,14 @@ void DialogPingSettings::loadSettings() {
     int typeSel = NekoGui::dataStore->auto_ping_type_selected;
     idx = comboTestTypeSelected->findData(typeSel);
     if (idx >= 0) comboTestTypeSelected->setCurrentIndex(idx);
+
+    for (int i = 0; i < listServers->count(); ++i) {
+        auto item = listServers->item(i);
+        QString idStr = item->data(Qt::UserRole).toString();
+        if (NekoGui::dataStore->auto_ping_selected_servers.contains(idStr)) {
+            item->setCheckState(Qt::Checked);
+        }
+    }
 }
 
 void DialogPingSettings::saveSettings() {
@@ -107,5 +123,15 @@ void DialogPingSettings::saveSettings() {
     NekoGui::dataStore->auto_ping_check_all = chkCheckAllNow->isChecked();
     NekoGui::dataStore->auto_ping_type_all = comboTestTypeAll->currentData().toInt();
     NekoGui::dataStore->auto_ping_type_selected = comboTestTypeSelected->currentData().toInt();
+
+    QStringList selectedServers;
+    for (int i = 0; i < listServers->count(); ++i) {
+        auto item = listServers->item(i);
+        if (item->checkState() == Qt::Checked) {
+            selectedServers.append(item->data(Qt::UserRole).toString());
+        }
+    }
+    NekoGui::dataStore->auto_ping_selected_servers = selectedServers;
+
     NekoGui::dataStore->Save();
 }
